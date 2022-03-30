@@ -35,7 +35,7 @@ menu = ['Yoga Pose Classification', 'About']
 choice = st.sidebar.selectbox('Menu', menu)
 
 # SIDEBAR MENU CHOICE
-if choice == 'Yoga Pose Classification':
+if choice == menu[0]:
     
     # Add poses to the sidebar
     pose = ['Pose 1', 'Pose 2', 'Pose 3', 'Pose 4', 'Pose 5']
@@ -65,7 +65,7 @@ if choice == 'Yoga Pose Classification':
     src = ['Upload Image', 'Take a picture']
     src_choice = st.radio('Source', src)
     
-    if src_choice == 'Upload Image':
+    if src_choice == src[0]:
         image_file = st.file_uploader("Upload Image", type=['jpg', 'png', 'jpeg'])
     else:
         image_file = st.camera_input("Take a picture")
@@ -89,7 +89,7 @@ if choice == 'Yoga Pose Classification':
             st.text('Please take a picture or upload a photo.')
             
 # SIDEBAR MENU CHOICE
-if choice == 'About':
+if choice == menu[1]:
     st.subheader('COSC 490 Group Project')
     
     # TODO: Add information about project or direct users to GitHub
