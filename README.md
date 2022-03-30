@@ -30,13 +30,13 @@ This application was created with the following language and module versions:
 ## Setup
 1. Before you get started, please ensure you have Python 3.7 and PIP and have the modules installed using the resources below:
 
-    1. Streamlit
+    * Streamlit [install instructions](https://docs.streamlit.io/library/get-started/installation)
 
         ```
         pip install streamlit
         ```
 
-    2. TODO
+    * TODO
 
 3. TODO
 
