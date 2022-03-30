@@ -21,18 +21,22 @@ def classify(img, pose):
 # Main Page Info
 st.title('Yoga Pose Classification App')
 st.subheader('This app lets you practice Yoga poses!')
-st.text('We used Streamlit and OpenCV for this app.')
+st.text('We used Streamlit for this app.')
 
 # TODO: Provide users more instructions
-st.text('')
+st.text("First, choose a pose that you want to try.")
+st.text("Second, take a picture or upload an image of yourself doing that pose.")
+st.text("Finally, click `Process` to run our model.")
 
-# Sidebar
+# SIDEBAR
 st.sidebar.header('Yoga Pose Classification App')
-st.sidebar.text('Run the app or read more about the project')
 
-# Menu options in the sidebar
+# MENU options in the sidebar
 menu = ['Yoga Pose Classification', 'About']
 choice = st.sidebar.selectbox('Menu', menu)
+
+# Bottom of sidebar
+st.sidebar.info("COSC 490 Project\n11 April 2022")
 
 # SIDEBAR MENU CHOICE
 if choice == menu[0]:
@@ -66,9 +70,9 @@ if choice == menu[0]:
     src_choice = st.radio('Source', src)
     
     if src_choice == src[0]:
-        image_file = st.file_uploader("Upload Image", type=['jpg', 'png', 'jpeg'])
+        image_file = st.file_uploader(src[0], type=['jpg', 'png', 'jpeg'])
     else:
-        image_file = st.camera_input("Take a picture")
+        image_file = st.camera_input(src[1])
 
     # Display the user's photo
     if image_file:
