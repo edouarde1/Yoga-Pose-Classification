@@ -6,13 +6,9 @@ import urllib.request
 from PIL import Image
 
 def get_md_as_string(path):
-    #url = "https://raw.githubusercontent.com/edouarde1/Yoga-Pose-Classification/main/" + path
-    #response = urllib.request.urlopen(url)
-    #return response.read().decode("utf-8")
-    with open("../documentation/" + path, 'r', encoding="utf-8") as f:
-        text = f.read()
-    return text
-
+    url = "https://raw.githubusercontent.com/edouarde1/Yoga-Pose-Classification/main/documentation/" + path
+    response = urllib.request.urlopen(url)
+    return response.read().decode("utf-8")
 
 @st.cache(allow_output_mutation=True)
 def load_model(model_name):
