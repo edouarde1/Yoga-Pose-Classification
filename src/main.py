@@ -17,37 +17,31 @@ def get_md_as_string(path):
 
 @st.cache(allow_output_mutation=True)
 def load_model(model_name):
-    model = keras.models.load_model("../models/" + model_name, compile=False)
+    model = keras.models.load_model("../models/" + model_name) # removed compile=False
     return model
 
 
-def classify_pose(img):
-    # Process Image
-    test_img = Image.open(img)
-    test_img = tf.image.resize(test_img, size=[224, 224], preserve_aspect_ratio=True)
-    test_img = keras.preprocessing.image.img_to_array(test_img)
-    test_img = test_img / 255.0
-    test_img = np.expand_dims(test_img, axis=0)
-
+def run_app(img):
+    # Process image using OpenPose
+    processed_img = open_pose_to_image(temporary_location)
+    display_pictures(img, processed_img)
+    
     # Load Model and Predict
-    model = load_model("cat_dog_model.h5")  # TODO: Update model name
-    results = model.predict(test_img)
-
-    return results
-
-
+    model = load_model("eds_cnn1_openpose")  # TODO: Update model name
+    results = model.predict(processed_img)
+    display_results(results)
+    
 # TODO: Update after determining model and result format
+def display_pictures(original, processed):
+    # Showing original image and processed image, use columns
+    left_col, right_col = st.columns(2)
+    left_col.image(original, caption="Original Image")
+    right_col.image(processed, caption="Processed Image")
+
 def display_results(results):
-    # If showing original image and processed image, use columns
-    # left_col, right_col = st.columns(2)
-    # left_col.image(img, caption="Original Image")
-    # right_col.image(proc_img, caption="Processed Image")
-    # right_col.write("Probability of correct pose: " + result_prob)
-
     # If only showing original with written results:
-    st.image(results)
-    # st.write("Probability of being a dog: " + str(results[0][0]))
-
+    # st.image(results)
+    st.write("Probability of... : " + str(results[0][0]))
 
 # Main Page Info
 st.title('Yoga Pose Classification App')
@@ -125,7 +119,7 @@ if sidebar_choice == sidebar_menu[1]:
     # TODO: decide if we want to (also) show the processed image with the stick figure on top
     if picture is not None:
         st.success("Image ready for processing.")
-        st.image(picture)
+        #st.image(picture)
 
         # Save the image into a temporary location for processing
         g = io.BytesIO(picture.read())  # BytesIO Object
@@ -137,10 +131,7 @@ if sidebar_choice == sidebar_menu[1]:
 
         # Process the image with openpose
         if st.button("Process"):
-            # res = classify_pose(picture)
-            # Using OpenPose to process the user's image
-            processed_img = open_pose_to_image(temporary_location)
-            display_results(processed_img)
+            res = run_app(picture)
 
 
 # MENU = ABOUT US
