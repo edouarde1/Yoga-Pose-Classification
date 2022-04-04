@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 import tensorflow as tf
-import keras
+from tensorflow import keras
 import urllib.request
 from PIL import Image
 import cv2
@@ -17,7 +17,7 @@ def get_md_as_string(path):
 
 @st.cache(allow_output_mutation=True)
 def load_model(model_name):
-    model = tf.keras.models.load_model("../models/" + model_name) # removed compile=False
+    model = keras.models.load_model("../models/" + model_name) # removed compile=False
     st.write(model.summary())
     return model
 
