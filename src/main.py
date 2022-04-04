@@ -8,6 +8,7 @@ import cv2
 import io
 from openpose_functions import open_pose_to_image
 
+labels = ['Cow-Face-Pose', 'Crescent-Moon-Pose', 'Eagle-Pose', 'Extended-Hand-to-Big-Toe-Pose', 'Half-Lord-of-the-Fishes-Pose', 'Half-Moon-Pose', 'Warrior-I-Pose', 'chair', 'cow-face', 'dancer', 'extended-side-angle', 'extended-triangle', 'firelog', 'goddess', 'hero', 'lotus', 'revolved-side-angle', 'tree-pose', 'upward-salute', 'warrior2']
 
 def get_md_as_string(path):
     url = "https://raw.githubusercontent.com/edouarde1/Yoga-Pose-Classification/main/documentation/" + path
@@ -30,8 +31,16 @@ def run_app(img):
     
     # Load Model and Predict
     model = load_model("eds_cnn1_openpose")  # TODO: Update model name
-    results = model.predict(processed_img)
-    display_results(results)
+    image = tf.io.read_file(temporary_location)
+    image = tf.image.decode_jpeg(image, channels=3)
+    image = tf.image.resize(image, [180, 180])
+    image = tf.expand_dims(image, axis=0)  # the shape would be (1, 180, 180, 3)
+    predictedvalues = model.predict(image)
+    print(predictedvalues)
+    predicted = np.argmax(predictedvalues, axis=1)
+    print(labels[predicted[0]])
+
+    display_results(predictedvalues)
     
 # TODO: Update after determining model and result format
 def display_pictures(original, processed):
