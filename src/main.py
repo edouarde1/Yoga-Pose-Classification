@@ -17,14 +17,16 @@ def get_md_as_string(path):
 
 @st.cache(allow_output_mutation=True)
 def load_model(model_name):
-    model = keras.models.load_model("../models/" + model_name) # removed compile=False
+    model = tf.keras.models.load_model("../models/" + model_name) # removed compile=False
+    st.write(model.summary())
     return model
 
 
 def run_app(img):
     # Process image using OpenPose
-    processed_img = open_pose_to_image(temporary_location)
-    display_pictures(img, processed_img)
+    with st.spinner("Processing image..."):
+        processed_img = open_pose_to_image(temporary_location)
+        display_pictures(img, processed_img)
     
     # Load Model and Predict
     model = load_model("eds_cnn1_openpose")  # TODO: Update model name
@@ -78,7 +80,7 @@ if sidebar_choice == sidebar_menu[1]:
     # Add pose options
     st.subheader("Choose a Yoga Pose")
     pose = ['Pose 1', 'Pose 2', 'Pose 3', 'Pose 4', 'Pose 5']
-    pose_choice = st.radio('Select the pose you want to practice', pose)
+    pose_choice = st.selectbox('Select the pose you want to practice', pose)
 
     # Load images for each pose
     if pose_choice == pose[0]:
