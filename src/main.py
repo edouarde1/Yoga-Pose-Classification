@@ -3,9 +3,6 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 import urllib.request
-from PIL import Image
-import cv2
-import io
 from openpose_functions import open_pose_to_image
 
 labels = ['Cow-Face-Pose', 'Crescent-Moon-Pose', 'Eagle-Pose', 'Extended-Hand-to-Big-Toe-Pose', 'Half-Lord-of-the-Fishes-Pose', 'Half-Moon-Pose', 'Warrior-I-Pose', 'chair', 'cow-face', 'dancer', 'extended-side-angle', 'extended-triangle', 'firelog', 'goddess', 'hero', 'lotus', 'revolved-side-angle', 'tree-pose', 'upward-salute', 'warrior2']
@@ -15,44 +12,46 @@ def get_md_as_string(path):
     response = urllib.request.urlopen(url)
     return response.read().decode("utf-8")
 
-
 @st.cache(allow_output_mutation=True)
 def load_model(model_name):
-    model = keras.models.load_model("../models/" + model_name) # removed compile=False
-    st.write(model.summary())
+    model = tf.keras.models.load_model("../models/" + model_name, compile=False) # removed compile=False
     return model
 
-
-def run_app(img):
+def run_app(original_img):
     # Process image using OpenPose
     with st.spinner("Processing image..."):
-        processed_img = open_pose_to_image(temporary_location)
-        display_pictures(img, processed_img)
+        processed_img = open_pose_to_image(original_img.getvalue())
+        display_pictures(original_img, processed_img)
     
-    # Load Model and Predict
-    model = load_model("eds_cnn1_openpose")  # TODO: Update model name
-    image = tf.io.read_file(temporary_location)
-    image = tf.image.decode_jpeg(image, channels=3)
-    image = tf.image.resize(image, [180, 180])
+    # Load Model
+    model = load_model("efficientnet_openpose")  # TODO: Update model name
+    
+    # Prepare processed image for prediction
+    image = tf.convert_to_tensor(processed_img)
+    image = tf.image.resize(image, [256, 256], preserve_aspect_ratio=True) # TODO: adjust size if needed
     image = tf.expand_dims(image, axis=0)  # the shape would be (1, 180, 180, 3)
-    predictedvalues = model.predict(image)
-    print(predictedvalues)
-    predicted = np.argmax(predictedvalues, axis=1)
-    print(labels[predicted[0]])
-
-    display_results(predictedvalues)
     
-# TODO: Update after determining model and result format
+    # Classify pose
+    predictedvalues = model.predict(image)
+    predicted = np.argmax(predictedvalues, axis=1)
+    
+    # See terminal for debugging
+    print("SHAPE: " + str(predictedvalues.shape))
+    print("VALS: " + str(predictedvalues))
+    print("PRED: " + str(predicted))
+    print("LABEL: " + str(labels[predicted[0]]))
+
+    display_results(labels[predicted[0]])
+
+# Show original vs. processed images
 def display_pictures(original, processed):
-    # Showing original image and processed image, use columns
     left_col, right_col = st.columns(2)
     left_col.image(original, caption="Original Image")
     right_col.image(processed, caption="Processed Image")
 
+# TODO: determine how we want to display results
 def display_results(results):
-    # If only showing original with written results:
-    # st.image(results)
-    st.write("Probability of... : " + str(results[0][0]))
+    st.write("Your pose was classified as: " + str(results))
 
 # Main Page Info
 st.title('Yoga Pose Classification App')
@@ -70,11 +69,6 @@ st.sidebar.write("Last updated: 30 March 2022")  # TODO: update
 
 # MENU = PROJECT INFO
 if sidebar_choice == sidebar_menu[0]:
-    # st.markdown("Our project's purpose...  \n"
-    #        +"Our goal...  \n"
-    #        +"\n"
-    #        +":point_left: How to use the web app...")
-    # st.markdown("View our [code on Github](https://github.com/edouarde1/Yoga-Pose-Classification)")
     st.write(get_md_as_string("project-info.md"))
 
 # MENU = PRACTICE YOGA
@@ -126,24 +120,11 @@ if sidebar_choice == sidebar_menu[1]:
     else:
         picture = st.camera_input(src[1])
 
-    # Display the user's photo
-    # TODO: decide if we want to (also) show the processed image with the stick figure on top
+    # If image provided, show process button to run app
     if picture is not None:
         st.success("Image ready for processing.")
-        #st.image(picture)
-
-        # Save the image into a temporary location for processing
-        g = io.BytesIO(picture.read())  # BytesIO Object
-        temporary_location = "images/temp.jpg"
-        with open(temporary_location, 'wb') as out:  # Open temporary file as bytes
-            out.write(g.read())  # Read bytes into file
-            # close file
-            out.close()
-
-        # Process the image with openpose
         if st.button("Process"):
             res = run_app(picture)
-
 
 # MENU = ABOUT US
 if sidebar_choice == sidebar_menu[2]:

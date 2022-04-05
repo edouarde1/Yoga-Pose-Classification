@@ -18,7 +18,7 @@ def open_pose_to_image(img):
     net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
 
     # Read image
-    frame = cv2.imread(img)
+    frame = cv2.imdecode(np.asarray(bytearray(img)), cv2.IMREAD_COLOR)
     height, width, channels = frame.shape
 
     # Resize
