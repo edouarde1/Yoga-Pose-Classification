@@ -46,7 +46,7 @@ def open_pose_to_image(img):
 
     # Empty list to store the detected keypoints
     points = []
-    for i in range(15):
+    for i in range(24):
         # confidence map of corresponding body's part.
         probMap = output[0, i, :, :]
         # Find global maxima of the probMap.
@@ -55,22 +55,23 @@ def open_pose_to_image(img):
         x = (width1 * point[0]) / W
         y = (height1 * point[1]) / H
         if prob > 0:
-            cv2.circle(black_img, (int(x), int(y)), 5, (255, 0, 0), thickness=-1, lineType=cv2.FILLED)
-            #cv2.putText(black_img, "{}".format(i), (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, lineType=cv2.LINE_AA)
+            cv2.circle(black_img, (int(x), int(y)), 3, (255, 0, 0), thickness=-1, lineType=cv2.FILLED)
+            # cv2.putText(black_img, "{}".format(i), (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, lineType=cv2.LINE_AA)
             # Add the point to the list if the probability is greater than the threshold
             points.append((int(x), int(y)))
         else:
             points.append(None)
 
     # Draw Skeleton
-    POSE_PAIRS = [[0,1], [1,2], [2,3], [3,4], [1,5], [5,6], [6,7], [1,8], [8,9], [9,10], [10,11], [8,12], [12,13], [13,14]]
+    POSE_PAIRS = [[0,1], [1,2], [2,3], [3,4], [1,5], [5,6], [6,7], [1,8], [8,9], [9,10], [10,11], [8,12], [12,13], [13,14], [0,15],
+                  [15,17], [16,18], [11, 14], [11, 22], [22,23], [14,21], [14,19], [19,20]]
     for pair in POSE_PAIRS:
         partA = pair[0]
         partB = pair[1]
         if points[partA] and points[partB]:
             # Set threshold so that long line (which result in wrong line), will be removed
-            if math.sqrt(pow(points[partA][0] - points[partB][0], 2) + pow(points[partA][1] - points[partB][1], 2)) < (150 * int(width_out * height / width)):
-                cv2.line(black_img, points[partA], points[partB], (255, 255, 0), 2)
+            if math.sqrt(pow(points[partA][0] - points[partB][0], 2) + pow(points[partA][1] - points[partB][1], 2)) < (150 * height1 / width1):
+                cv2.line(black_img, points[partA], points[partB], (255, 255, 255), 2)
 
     return black_img
 

@@ -5,36 +5,40 @@ from tensorflow import keras
 import urllib.request
 from openpose_functions import open_pose_to_image
 
-labels = ['Cow-Face-Pose', 'Crescent-Moon-Pose', 'Eagle-Pose', 'Extended-Hand-to-Big-Toe-Pose', 'Half-Lord-of-the-Fishes-Pose', 'Half-Moon-Pose', 'Warrior-I-Pose', 'chair', 'cow-face', 'dancer', 'extended-side-angle', 'extended-triangle', 'firelog', 'goddess', 'hero', 'lotus', 'revolved-side-angle', 'tree-pose', 'upward-salute', 'warrior2']
 
 def get_md_as_string(path):
     url = "https://raw.githubusercontent.com/edouarde1/Yoga-Pose-Classification/main/documentation/" + path
     response = urllib.request.urlopen(url)
     return response.read().decode("utf-8")
 
+
 @st.cache(allow_output_mutation=True)
 def load_model(model_name):
     model = tf.keras.models.load_model("../models/" + model_name, compile=False) # removed compile=False
     return model
 
+
 def run_app(original_img):
-    # Process image using OpenPose
     with st.spinner("Processing image..."):
         processed_img = open_pose_to_image(original_img.getvalue())
         display_pictures(original_img, processed_img)
-    
+
     # Load Model
     model = load_model("efficientnet_openpose")  # TODO: Update model name
-    
+
     # Prepare processed image for prediction
     image = tf.convert_to_tensor(processed_img)
-    image = tf.image.resize(image, [256, 256], preserve_aspect_ratio=True) # TODO: adjust size if needed
+    image = tf.image.resize(image, [256, 256]) # TODO: adjust size if needed
     image = tf.expand_dims(image, axis=0)  # the shape would be (1, 180, 180, 3)
-    
+
     # Classify pose
     predictedvalues = model.predict(image)
     predicted = np.argmax(predictedvalues, axis=1)
-    
+
+    # Define labels
+    labels = ["chair", "cow-face2", "cow-face1", "crescent-moon", "dancer", "eagle", "big-to-toe", "extended-side-triangle",
+              "extended-triangle", "firelog", "goddess", "half-lord-of-the-fishes", "half-moon",
+              "hero", "lotus", "revolved-side-angle", "tree", "upward-salute", "warrior1", "warrior2"]
     # See terminal for debugging
     print("SHAPE: " + str(predictedvalues.shape))
     print("VALS: " + str(predictedvalues))
@@ -42,6 +46,8 @@ def run_app(original_img):
     print("LABEL: " + str(labels[predicted[0]]))
 
     display_results(labels[predicted[0]])
+    return labels[predicted[0]]
+
 
 # Show original vs. processed images
 def display_pictures(original, processed):
@@ -49,9 +55,11 @@ def display_pictures(original, processed):
     left_col.image(original, caption="Original Image")
     right_col.image(processed, caption="Processed Image")
 
+
 # TODO: determine how we want to display results
 def display_results(results):
     st.write("Your pose was classified as: " + str(results))
+
 
 # Main Page Info
 st.title('Yoga Pose Classification App')
