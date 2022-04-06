@@ -36,13 +36,18 @@ This application was created with the following language and module versions:
         pip install streamlit
         ```
 
-    * TODO
+    * OpenPose
+        1. Download [openpose-1.7.0](https://github.com/CMU-Perceptual-Computing-Lab/openpose/releases)
+        2. Extract the folder `openpose` and move to the same directory as the `Yoga-Pose-Classification` app.
+        3. Download [caffemodel](https://www.kaggle.com/datasets/changethetuneman/openpose-model?select=pose_iter_584000.caffemodel)
+        4. Move `pose_iter_584000.caffemodel` to `openpose\models\pose\body_25`
 
 3. TODO
 
 4. Run the application
 
     ```
+    cd src
     streamlit run main.py
     ```
 

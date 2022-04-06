@@ -1,10 +1,17 @@
+import os
+import time
 import streamlit as st
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 import urllib.request
-from openpose_functions import open_pose_to_image
-from image_process import load_img
+from PIL import Image
+from skimage import transform
+from proc import save_img, render_img
+
+# TODO: Use Python tempfile instead
+USER_IMG = "images/temp.jpg"
+PROC_IMG = "images/temp_rendered.png"
 
 def get_md_as_string(path):
     url = "https://raw.githubusercontent.com/edouarde1/Yoga-Pose-Classification/main/documentation/" + path
@@ -20,23 +27,22 @@ def load_model(model_name):
 
 def run_app(original_img):
     with st.spinner("Processing image..."):
-        processed_img = open_pose_to_image(original_img.getvalue())
-        display_pictures(original_img, processed_img)
-
+        # Convert user image to rendered image
+        render_img()
+        # give the system time to save the rendered image
+        time.sleep(2)
+        # Process rendered img for model
+        rendered_img = Image.open(PROC_IMG)
+        display_pictures(original_img, rendered_img)
+        processed_image = np.array(rendered_img).astype('float32')/255
+        processed_image = transform.resize(processed_image, (256, 256, 3))
+        processed_image = tf.expand_dims(processed_image, axis=0)
+        
     # Load Model
     model = load_model("efficientnet_pretrain1_openpose")  # TODO: Update model name
 
-    # Prepare processed image for prediction (DOES NOT WORK!)
-        #image = tf.convert_to_tensor(processed_img)
-        #image = tf.image.resize(image, [256, 256]) # TODO: adjust size if needed
-        #image = tf.expand_dims(image, axis=0)  # the shape would be (1, 180, 180, 3)
-
-    # Prepare processed image for prediction
-    image = load_img('')
-
-    
     # Classify pose
-    predictedvalues = model.predict(image)
+    predictedvalues = model.predict(processed_image)
     predicted = np.argmax(predictedvalues, axis=1)
 
     # Define labels
@@ -50,15 +56,16 @@ def run_app(original_img):
     print("LABEL: " + str(labels[predicted[0]]))
 
     display_results(labels[predicted[0]])
-    return labels[predicted[0]]
-
+    
+    # TODO: Use Python tempfile instead to ensure user image is ALWAYS deleted
+    os.remove(USER_IMG)
+    os.remove(PROC_IMG)
 
 # Show original vs. processed images
 def display_pictures(original, processed):
     left_col, right_col = st.columns(2)
     left_col.image(original, caption="Original Image")
     right_col.image(processed, caption="Processed Image")
-
 
 # TODO: determine how we want to display results
 def display_results(results):
@@ -136,7 +143,9 @@ if sidebar_choice == sidebar_menu[1]:
     if picture is not None:
         st.success("Image ready for processing.")
         if st.button("Process"):
-            res = run_app(picture)
+            # Save the image into a temporary location for processing
+            save_img(picture, USER_IMG)
+            run_app(picture)
 
 # MENU = ABOUT US
 if sidebar_choice == sidebar_menu[2]:
