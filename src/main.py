@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 import urllib.request
 from openpose_functions import open_pose_to_image
-
+from image_process import load_img
 
 def get_md_as_string(path):
     url = "https://raw.githubusercontent.com/edouarde1/Yoga-Pose-Classification/main/documentation/" + path
@@ -24,21 +24,25 @@ def run_app(original_img):
         display_pictures(original_img, processed_img)
 
     # Load Model
-    model = load_model("efficientnet_openpose")  # TODO: Update model name
+    model = load_model("efficientnet_pretrain1_openpose")  # TODO: Update model name
+
+    # Prepare processed image for prediction (DOES NOT WORK!)
+        #image = tf.convert_to_tensor(processed_img)
+        #image = tf.image.resize(image, [256, 256]) # TODO: adjust size if needed
+        #image = tf.expand_dims(image, axis=0)  # the shape would be (1, 180, 180, 3)
 
     # Prepare processed image for prediction
-    image = tf.convert_to_tensor(processed_img)
-    image = tf.image.resize(image, [256, 256]) # TODO: adjust size if needed
-    image = tf.expand_dims(image, axis=0)  # the shape would be (1, 180, 180, 3)
+    image = load_img('')
 
+    
     # Classify pose
     predictedvalues = model.predict(image)
     predicted = np.argmax(predictedvalues, axis=1)
 
     # Define labels
-    labels = ["chair", "cow-face2", "cow-face1", "crescent-moon", "dancer", "eagle", "big-to-toe", "extended-side-triangle",
-              "extended-triangle", "firelog", "goddess", "half-lord-of-the-fishes", "half-moon",
-              "hero", "lotus", "revolved-side-angle", "tree", "upward-salute", "warrior1", "warrior2"]
+    labels = ['Cow-Face1','Extended-Hand-to-Big-Toe-Pose','Half-Lord-of-the-Fishes-Pose',
+    'Half-Moon-Pose','Warrior-I-Pose','dancer','extended-triangle','firelog','goddess',
+    'lotus','revolved-side-angle','tree-pose','upward-salute','warrior2']
     # See terminal for debugging
     print("SHAPE: " + str(predictedvalues.shape))
     print("VALS: " + str(predictedvalues))
