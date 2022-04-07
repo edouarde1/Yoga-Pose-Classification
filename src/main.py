@@ -13,6 +13,7 @@ from proc import save_img, render_img
 USER_IMG = "images/temp.jpg"
 PROC_IMG = "images/temp_rendered.png"
 
+
 def get_md_as_string(path):
     url = "https://raw.githubusercontent.com/edouarde1/Yoga-Pose-Classification/main/documentation/" + path
     response = urllib.request.urlopen(url)
@@ -29,14 +30,17 @@ def run_app(original_img):
     with st.spinner("Processing image..."):
         # Convert user image to rendered image
         render_img()
-        # give the system time to save the rendered image
-        time.sleep(2)
-        # Process rendered img for model
-        rendered_img = Image.open(PROC_IMG)
-        display_pictures(original_img, rendered_img)
-        processed_image = np.array(rendered_img).astype('float32')/255
-        processed_image = transform.resize(processed_image, (256, 256, 3))
-        processed_image = tf.expand_dims(processed_image, axis=0)
+        # check if openpose has finished rendering the image
+        render_checker = False
+        while not render_checker:
+            # Process rendered img for model
+            if os.path.exists(USER_IMG) and os.path.exists(PROC_IMG):
+                render_checker = True
+                rendered_img = Image.open(PROC_IMG)
+                display_pictures(original_img, rendered_img)
+                processed_image = np.array(rendered_img).astype('float32')/255
+                processed_image = transform.resize(processed_image, (256, 256, 3))
+                processed_image = tf.expand_dims(processed_image, axis=0)
         
     # Load Model
     model = load_model("efficientnet_pretrain1_openpose")  # TODO: Update model name
@@ -61,11 +65,13 @@ def run_app(original_img):
     os.remove(USER_IMG)
     os.remove(PROC_IMG)
 
+
 # Show original vs. processed images
 def display_pictures(original, processed):
     left_col, right_col = st.columns(2)
     left_col.image(original, caption="Original Image")
     right_col.image(processed, caption="Processed Image")
+
 
 # TODO: determine how we want to display results
 def display_results(results):
