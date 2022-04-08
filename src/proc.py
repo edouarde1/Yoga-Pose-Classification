@@ -11,5 +11,5 @@ def save_img(file, path):
 def render_img():
     current = os.getcwd()
     os.chdir("../../openpose/")
-    subprocess.Popen("bin/OpenPoseDemo.exe --image_dir ../Yoga-Pose-Classification/src/images/ --write_images ../Yoga-Pose-Classification/src/images/ --disable_blending")
+    subprocess.Popen("bin/OpenPoseDemo.exe --image_dir ../Yoga-Pose-Classification/src/images/ --write_images ../Yoga-Pose-Classification/src/images/ --disable_blending --display 0")
     os.chdir(current)

@@ -1,5 +1,6 @@
 import os
 import time
+
 import streamlit as st
 import numpy as np
 import tensorflow as tf
@@ -22,7 +23,7 @@ def get_md_as_string(path):
 
 @st.cache(allow_output_mutation=True)
 def load_model(model_name):
-    model = tf.keras.models.load_model("../models/" + model_name, compile=False) # removed compile=False
+    model = tf.keras.models.load_model("../models/" + model_name, compile=False)  # removed compile=False
     return model
 
 
@@ -31,17 +32,16 @@ def run_app(original_img):
         # Convert user image to rendered image
         render_img()
         # check if openpose has finished rendering the image
-        render_checker = False
-        while not render_checker:
-            # Process rendered img for model
-            if os.path.exists(USER_IMG) and os.path.exists(PROC_IMG):
-                render_checker = True
-                rendered_img = Image.open(PROC_IMG)
-                display_pictures(original_img, rendered_img)
-                processed_image = np.array(rendered_img).astype('float32')/255
-                processed_image = transform.resize(processed_image, (256, 256, 3))
-                processed_image = tf.expand_dims(processed_image, axis=0)
-        
+        while not os.path.exists(PROC_IMG) and os.path.exists(USER_IMG):
+            time.sleep(1)
+
+        # Process rendered img for model
+        rendered_img = Image.open(PROC_IMG)
+        display_pictures(original_img, rendered_img)
+        processed_image = np.array(rendered_img).astype('float32') / 255
+        processed_image = transform.resize(processed_image, (256, 256, 3))
+        processed_image = tf.expand_dims(processed_image, axis=0)
+
     # Load Model
     model = load_model("efficientnet_pretrain1_openpose")  # TODO: Update model name
 
@@ -50,9 +50,9 @@ def run_app(original_img):
     predicted = np.argmax(predictedvalues, axis=1)
 
     # Define labels
-    labels = ['Cow-Face1','Extended-Hand-to-Big-Toe-Pose','Half-Lord-of-the-Fishes-Pose',
-    'Half-Moon-Pose','Warrior-I-Pose','dancer','extended-triangle','firelog','goddess',
-    'lotus','revolved-side-angle','tree-pose','upward-salute','warrior2']
+    labels = ['Cow-Face', 'Extended-Hand-to-Big-Toe-Pose', 'Half-Lord-of-the-Fishes-Pose',
+              'Half-Moon-Pose', 'Warrior-I-', 'Dancer', 'Extended-Triangle', 'Fire-Log', 'Goddess',
+              'Lotus', 'Revolved-Side-Angle', 'Tree-Pose', 'Upward-Salute', 'Warrior-II']
     # See terminal for debugging
     print("SHAPE: " + str(predictedvalues.shape))
     print("VALS: " + str(predictedvalues))
@@ -60,7 +60,7 @@ def run_app(original_img):
     print("LABEL: " + str(labels[predicted[0]]))
 
     display_results(labels[predicted[0]])
-    
+
     # TODO: Use Python tempfile instead to ensure user image is ALWAYS deleted
     os.remove(USER_IMG)
     os.remove(PROC_IMG)
@@ -76,6 +76,12 @@ def display_pictures(original, processed):
 # TODO: determine how we want to display results
 def display_results(results):
     st.write("Your pose was classified as: " + str(results))
+    if pose_choice == 'Choose a pose':
+        st.write("You have not chose any model pose. Please pick one from the select box above.")
+    elif pose_choice == str(results):
+        st.write("Congratulation! You have correctly done the pose")
+    else:
+        st.write("Your pose is not correct. Please try again.")
 
 
 # Main Page Info
@@ -101,31 +107,25 @@ if sidebar_choice == sidebar_menu[1]:
 
     # Provide users more instructions
     with st.expander("Instructions"):
-        st.write("First, choose a pose that you want to practice.")
+        st.write("First, choose a pose that you want to practice for example image of that pose.")
         st.write("Second, take a picture or upload an image of yourself doing that pose.")
         st.write("Finally, click `Process` to run our model.")
+        st.write("*Tip: For pose that have facing direction (left or right), you can do in either direction.")
 
     # Add pose options
     st.subheader("Choose a Yoga Pose")
-    pose = ['Pose 1', 'Pose 2', 'Pose 3', 'Pose 4', 'Pose 5']
-    pose_choice = st.selectbox('Select the pose you want to practice', pose)
+    poses = ['Choose a pose', 'Cow-Face', 'Extended-Hand-to-Big-Toe', 'Half-Lord-of-the-Fishes',
+             'Half-Moon', 'Warrior-I', 'Dancer', 'Extended-Triangle', 'Fire-Log', 'Goddess',
+             'Lotus', 'Revolved-Side-Angle', 'Tree', 'Upward-Salute', 'Warrior-II']
+    pose_choice = st.selectbox('Select the pose you want to practice', poses)
 
-    # Load images for each pose
-    if pose_choice == pose[0]:
-        st.text('Try to do ' + pose[0])
-        # st.image(pose_file0)
-    elif pose_choice == pose[1]:
-        st.text('Try to do ' + pose[1])
-        # st.image(pose_file1)
-    elif pose_choice == pose[2]:
-        st.text('Try to do ' + pose[2])
-        # st.image(pose_file2)
-    elif pose_choice == pose[3]:
-        st.text('Try to do ' + pose[3])
-        # st.image(pose_file3)
-    else:
-        st.text('Try to do ' + pose[4])
-        # st.image(pose_file4)
+    for pose in poses:
+        if pose_choice == 'Choose a pose':
+            pass
+        else:
+            if pose_choice == pose:
+                st.text('Example model for ' + pose + ':')
+                st.image('./example_poses/' + pose + '.png')
 
     # Update page subheader and text
     st.subheader('Your Turn')
