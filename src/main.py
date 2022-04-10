@@ -54,7 +54,7 @@ def run_app(original_img):
     print("PRED: " + str(predicted))
     print("LABEL: " + str(poses[predicted[0]]))
     # Display results
-    display_results(poses[predicted[0]])
+    display_results(poses[predicted[0]], predictedvalues[0], predicted)
     return poses[predicted[0]]
 
 
@@ -65,18 +65,21 @@ def display_pictures(original, processed):
     right_col.image(processed, caption="Processed Image")
 
 
-# TODO: determine how we want to display results
-def display_results(results):
-    threshold = 0.8
-
-    st.write("Your pose was classified as: " + str(results))
-    if pose_choice == 'Choose a pose':
-        st.write("You have not chosen a model pose. Please select one from the dropdown above.")
-    elif pose_choice == str(results):
-        st.balloons()
-        st.write("Congratulations! You have correctly done the pose")
+def display_results(results, probabilities, predicted):
+    threshold = 0.80
+    if probabilities[predicted[0]] > threshold:
+        if pose_choice == 'Choose a pose':
+            st.write("You have not chosen a model pose. Please select one from the dropdown above.")
+            st.write("Congratulations! Your pose was classified as: " + str(results))
+        elif pose_choice == str(results):
+            st.balloons()
+            st.write("Congratulations! You have correctly done the pose")
+        else:
+            st.write(
+                "Your pose does not match the selected pose " + pose_choice + ", were you trying " + str(results) + "?")
     else:
-        st.write("Your pose is not correct. Please try again.")
+        st.write("Your pose was classified as" + str(results) + "with an accuracy of " + str(probabilities[predicted[0]]) +
+                 ". This is not high enough to be confident in your pose, please check your form and try again!")
 
 
 # Main Page Info
