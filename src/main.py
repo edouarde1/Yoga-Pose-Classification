@@ -5,6 +5,7 @@ from tensorflow import keras
 import urllib.request
 from openpose_functions import open_pose_to_image
 from image_process import load_img
+from skimage import transform
 
 def get_md_as_string(path):
     url = "https://raw.githubusercontent.com/edouarde1/Yoga-Pose-Classification/main/documentation/" + path
@@ -20,8 +21,11 @@ def load_model(model_name):
 
 def run_app(original_img):
     with st.spinner("Processing image..."):
-        processed_img = open_pose_to_image(original_img.getvalue())
-        display_pictures(original_img, processed_img)
+        rendered_image = open_pose_to_image(original_img.getvalue())
+        processed_image = np.array(rendered_image).astype('float32') / 255
+        processed_image = transform.resize(processed_image, (256, 256, 3))
+        processed_image = tf.expand_dims(processed_image, axis=0)
+        display_pictures(original_img, rendered_image)
 
     # Load Model
     model = load_model("efficientnet_pretrain1_openpose")  # TODO: Update model name
@@ -32,11 +36,11 @@ def run_app(original_img):
         #image = tf.expand_dims(image, axis=0)  # the shape would be (1, 180, 180, 3)
 
     # Prepare processed image for prediction
-    image = load_img('')
+    # image = load_img(processed_image)
 
     
     # Classify pose
-    predictedvalues = model.predict(image)
+    predictedvalues = model.predict(processed_image)
     predicted = np.argmax(predictedvalues, axis=1)
 
     # Define labels
