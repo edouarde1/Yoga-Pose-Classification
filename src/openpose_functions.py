@@ -1,8 +1,5 @@
 import cv2
 import math
-import numpy as np
-
-
 def open_pose_to_image(img):
 
     # We can choose different types of model here
@@ -46,7 +43,7 @@ def open_pose_to_image(img):
 
     # Empty list to store the detected keypoints
     points = []
-    for i in range(24):
+    for i in range(25):
         # confidence map of corresponding body's part.
         probMap = output[0, i, :, :]
         # Find global maxima of the probMap.
@@ -63,15 +60,22 @@ def open_pose_to_image(img):
             points.append(None)
 
     # Draw Skeleton
-    POSE_PAIRS = [[0,1], [1,2], [2,3], [3,4], [1,5], [5,6], [6,7], [1,8], [8,9], [9,10], [10,11], [8,12], [12,13], [13,14], [0,15],
-                  [15,17], [16,18], [11, 14], [11, 22], [22,23], [14,21], [14,19], [19,20]]
+    POSE_PAIRS = [[0, 1, 153, 0, 51], [1, 2, 153, 51, 0], [2, 3, 153, 102, 0], [3, 4, 153, 153, 0], [1, 5, 102, 153, 0],
+                  [5, 6, 51, 153, 0], [6, 7, 0, 153, 0], [1, 8, 153, 0, 0], [8, 9, 0, 153, 51], [9, 10, 0, 153, 102],
+                  [10, 11, 0, 153, 153], [8, 12, 0, 102, 153], [12, 13, 0, 51, 153], [13, 14, 0, 0, 153],
+                  [0, 15, 153, 0, 102], [15, 17, 153, 0, 153], [0, 16, 102, 0, 153], [16, 18, 51, 0, 153],
+                  [11, 23, 0, 153, 153], [11, 22, 0, 153, 153], [22, 23, 0, 153, 153], [14, 21, 0, 0, 153],
+                  [14, 19, 0, 0, 153], [19, 20, 0, 0, 153]]
     for pair in POSE_PAIRS:
         partA = pair[0]
         partB = pair[1]
+        r = pair[2]
+        g = pair[3]
+        b = pair[4]
         if points[partA] and points[partB]:
             # Set threshold so that long line (which result in wrong line), will be removed
             if math.sqrt(pow(points[partA][0] - points[partB][0], 2) + pow(points[partA][1] - points[partB][1], 2)) < (150 * height1 / width1):
-                cv2.line(black_img, points[partA], points[partB], (255, 255, 255), 2)
+                cv2.line(black_img, points[partA], points[partB], (r, g, b), 2)
 
     return black_img
 
@@ -142,3 +146,6 @@ def open_pose_to_image(img):
 #         # Break the loop
 #         else:
 #             break
+
+
+import numpy as np

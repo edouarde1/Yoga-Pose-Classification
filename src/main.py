@@ -4,6 +4,8 @@ import tensorflow as tf
 from tensorflow import keras
 import urllib.request
 from openpose_functions import open_pose_to_image
+from image_process import load_img
+from skimage import transform
 
 
 def get_md_as_string(path):
@@ -12,41 +14,48 @@ def get_md_as_string(path):
     return response.read().decode("utf-8")
 
 
+poses = ['Cow-Face', 'Extended-Hand-to-Big-Toe-Pose', 'Half-Lord-of-the-Fishes-Pose',
+         'Half-Moon-Pose', 'Warrior-I-', 'Dancer', 'Extended-Triangle', 'Fire-Log', 'Goddess',
+         'Lotus', 'Revolved-Side-Angle', 'Tree-Pose', 'Upward-Salute', 'Warrior-II']
+
+
 @st.cache(allow_output_mutation=True)
 def load_model(model_name):
-    model = tf.keras.models.load_model("../models/" + model_name, compile=False) # removed compile=False
+    model = tf.keras.models.load_model("../models/" + model_name, compile=False)  # removed compile=False
     return model
 
 
 def run_app(original_img):
     with st.spinner("Processing image..."):
-        processed_img = open_pose_to_image(original_img.getvalue())
-        display_pictures(original_img, processed_img)
+        rendered_image = open_pose_to_image(original_img.getvalue())
+        processed_image = np.array(rendered_image).astype('float32') / 255
+        processed_image = transform.resize(processed_image, (256, 256, 3))
+        processed_image = tf.expand_dims(processed_image, axis=0)
+        display_pictures(original_img, rendered_image)
 
     # Load Model
-    model = load_model("efficientnet_openpose")  # TODO: Update model name
+    model = load_model("efficientnet_pretrain1_openpose")  # TODO: Update model name
+
+    # Prepare processed image for prediction (DOES NOT WORK!)
+    # image = tf.convert_to_tensor(processed_img)
+    # image = tf.image.resize(image, [256, 256]) # TODO: adjust size if needed
+    # image = tf.expand_dims(image, axis=0)  # the shape would be (1, 180, 180, 3)
 
     # Prepare processed image for prediction
-    image = tf.convert_to_tensor(processed_img)
-    image = tf.image.resize(image, [256, 256]) # TODO: adjust size if needed
-    image = tf.expand_dims(image, axis=0)  # the shape would be (1, 180, 180, 3)
+    # image = load_img(processed_image)
 
     # Classify pose
-    predictedvalues = model.predict(image)
+    predictedvalues = model.predict(processed_image)
     predicted = np.argmax(predictedvalues, axis=1)
 
-    # Define labels
-    labels = ["chair", "cow-face2", "cow-face1", "crescent-moon", "dancer", "eagle", "big-to-toe", "extended-side-triangle",
-              "extended-triangle", "firelog", "goddess", "half-lord-of-the-fishes", "half-moon",
-              "hero", "lotus", "revolved-side-angle", "tree", "upward-salute", "warrior1", "warrior2"]
     # See terminal for debugging
     print("SHAPE: " + str(predictedvalues.shape))
     print("VALS: " + str(predictedvalues))
     print("PRED: " + str(predicted))
-    print("LABEL: " + str(labels[predicted[0]]))
-
-    display_results(labels[predicted[0]])
-    return labels[predicted[0]]
+    print("LABEL: " + str(poses[predicted[0]]))
+    # Display results
+    display_results(poses[predicted[0]], predictedvalues[0], predicted)
+    return poses[predicted[0]]
 
 
 # Show original vs. processed images
@@ -56,9 +65,21 @@ def display_pictures(original, processed):
     right_col.image(processed, caption="Processed Image")
 
 
-# TODO: determine how we want to display results
-def display_results(results):
-    st.write("Your pose was classified as: " + str(results))
+def display_results(results, probabilities, predicted):
+    threshold = 0.80
+    if probabilities[predicted[0]] > threshold:
+        if pose_choice == 'Choose a pose':
+            st.write("You have not chosen a model pose. Please select one from the dropdown above.")
+            st.write("Congratulations! Your pose was classified as: " + str(results))
+        elif pose_choice == str(results):
+            st.balloons()
+            st.write("Congratulations! You have correctly done the pose")
+        else:
+            st.write(
+                "Your pose does not match the selected pose " + pose_choice + ", were you trying " + str(results) + "?")
+    else:
+        st.write("Your pose was classified as" + str(results) + "with an accuracy of " + str(probabilities[predicted[0]]) +
+                 ". This is not high enough to be confident in your pose, please check your form and try again!")
 
 
 # Main Page Info
@@ -69,53 +90,39 @@ st.write(" ------ ")
 st.sidebar.title("Yoga Pose Classification App")
 st.sidebar.write(" ------ ")
 
-sidebar_menu = ['Project Info', 'Practice Yoga', 'About Us']
+sidebar_menu = ['Practice Yoga', 'About']
 sidebar_choice = st.sidebar.selectbox('Menu', sidebar_menu)
 
 st.sidebar.write(" ------ ")
-st.sidebar.write("Last updated: 30 March 2022")  # TODO: update
-
-# MENU = PROJECT INFO
-if sidebar_choice == sidebar_menu[0]:
-    st.write(get_md_as_string("project-info.md"))
+st.sidebar.write("Last updated: 10 April 2022")  # TODO: update
 
 # MENU = PRACTICE YOGA
-if sidebar_choice == sidebar_menu[1]:
+if sidebar_choice == sidebar_menu[0]:
 
     # Provide users more instructions
     with st.expander("Instructions"):
-        st.write("First, choose a pose that you want to practice.")
+        st.write("First, choose a pose that you want to practice for example image of that pose.")
         st.write("Second, take a picture or upload an image of yourself doing that pose.")
         st.write("Finally, click `Process` to run our model.")
+        st.write("*Tip: For pose that have facing direction (left or right), you can do in either direction.")
 
-    # Add pose options
     st.subheader("Choose a Yoga Pose")
-    pose = ['Pose 1', 'Pose 2', 'Pose 3', 'Pose 4', 'Pose 5']
-    pose_choice = st.selectbox('Select the pose you want to practice', pose)
+    # take pose list and add "choose a pose" option so that a pose isn't already selected
+    pose_choice = st.selectbox('Select the pose you want to practice', (["Choose a pose"] + poses))
 
-    # Load images for each pose
-    if pose_choice == pose[0]:
-        st.text('Try to do ' + pose[0])
-        # st.image(pose_file0)
-    elif pose_choice == pose[1]:
-        st.text('Try to do ' + pose[1])
-        # st.image(pose_file1)
-    elif pose_choice == pose[2]:
-        st.text('Try to do ' + pose[2])
-        # st.image(pose_file2)
-    elif pose_choice == pose[3]:
-        st.text('Try to do ' + pose[3])
-        # st.image(pose_file3)
-    else:
-        st.text('Try to do ' + pose[4])
-        # st.image(pose_file4)
+    for pose in poses:
+        if pose_choice == 'Choose a pose':
+            pass
+        else:
+            if pose_choice == pose:
+                st.write('Example model for ' + pose + ':')
+                st.image('./example_poses/' + pose + '.png')
+                st.write("All images are provided by the publicly available dataset...")  # TODO: finish reference
 
     # Update page subheader and text
     st.subheader('Your Turn')
 
-    st.info("Privacy Info: Uploaded images are never saved or stored. "
-            + "They are held temporarily in memory for processing "
-            + "and are discarded after the results are displayed. ")
+    st.info("Privacy Info: Uploaded images are not saved")
     st.warning("For best results, please upload an image of one (1) person "
                + "doing the Yoga pose in the center of the frame.")
 
@@ -132,11 +139,12 @@ if sidebar_choice == sidebar_menu[1]:
     if picture is not None:
         st.success("Image ready for processing.")
         if st.button("Process"):
-            res = run_app(picture)
+            run_app(picture)
 
-# MENU = ABOUT US
-if sidebar_choice == sidebar_menu[2]:
-    # TODO: write more
+# MENU = ABOUT
+# TODO: edit, remove, add info
+if sidebar_choice == sidebar_menu[1]:
+    st.write(get_md_as_string("project-info.md"))
     st.write("We are students at the University of British Columbia Okanagan Campus, "
              + "and this project was created for the course COSC 490: Student-Directed Seminar "
              + "(Topic: Advanced Machine Learning).")
