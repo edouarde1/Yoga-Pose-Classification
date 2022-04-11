@@ -36,11 +36,11 @@ This application was created with the following language and module versions:
 1. Before you get started, please ensure you have Python 3.7, PIP, and the modules listed above installed.
 
 2. Download and Prepare OpenPose 
-    a. For Window User:
+    - For Window User:
         1. Download [openpose-1.7.0](https://github.com/CMU-Perceptual-Computing-Lab/openpose/releases/tag/v1.7.0) (portable version of OpenPose)
         2. Extract the folder `openpose` and move it into the `Yoga-Pose-Classification` app (*note: put inside not on the same level*).
         3. Double click on `openpose/models/getBaseModels.bat` to download the required models for image rendering
-    b. For Mac User:
+    - For Mac User:
         1. Download [openpose-1.7.0](https://github.com/CMU-Perceptual-Computing-Lab/openpose/releases/tag/v1.7.0) (portable version of OpenPose)
         2. Extract the folder `openpose` and move it into the `Yoga-Pose-Classification` app (*note: put inside not on the same level*).
         3. Download the caffemodel from this [link](https://www.kaggle.com/datasets/changethetuneman/openpose-model?select=pose_iter_584000.caffemodel) and put it inside this path "openpose/models/pose/body_25"
