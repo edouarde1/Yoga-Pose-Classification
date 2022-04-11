@@ -14,8 +14,8 @@ def get_md_as_string(path):
     return response.read().decode("utf-8")
 
 
-poses = ['Cow-Face', 'Extended-Hand-to-Big-Toe-Pose', 'Half-Lord-of-the-Fishes-Pose',
-         'Half-Moon-Pose', 'Warrior-I-', 'Dancer', 'Extended-Triangle', 'Fire-Log', 'Goddess',
+poses = ['Cow-Face', 'Extended-Hand-to-Big-Toe', 'Half-Lord-of-the-Fishes',
+         'Half-Moon', 'Warrior-I', 'Dancer', 'Extended-Triangle', 'Fire-Log', 'Goddess',
          'Lotus', 'Revolved-Side-Angle', 'Tree-Pose', 'Upward-Salute', 'Warrior-II']
 
 
@@ -70,7 +70,9 @@ def display_results(results, probabilities, predicted):
     if probabilities[predicted[0]] > threshold:
         if pose_choice == 'Choose a pose':
             st.write("You have not chosen a model pose. Please select one from the dropdown above.")
-            st.write("Your pose was classified as: " + str(results))
+
+            st.write("Your pose was classified as: " + str(results) + ".")
+            
         elif pose_choice == str(results):
             st.balloons()
             st.write("Congratulations! You have correctly done the pose")
@@ -81,6 +83,7 @@ def display_results(results, probabilities, predicted):
         st.write("Your pose was classified as " + str(results) + " with an accuracy of "
                  + '{0:.2f}'.format(probabilities[predicted[0]]*100) + "%.")
         st.write("This is not high enough to be confident in your pose, please check your form and try again!")
+
 
 
 # Main Page Info
