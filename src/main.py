@@ -15,7 +15,7 @@ def get_md_as_string(path):
 
 
 poses = ['Cow-Face', 'Extended-Hand-to-Big-Toe-Pose', 'Half-Lord-of-the-Fishes-Pose',
-         'Half-Moon-Pose', 'Warrior-I-', 'Dancer', 'Extended-Triangle', 'Fire-Log', 'Goddess',
+         'Half-Moon-Pose', 'Warrior-I', 'Dancer', 'Extended-Triangle', 'Fire-Log', 'Goddess',
          'Lotus', 'Revolved-Side-Angle', 'Tree-Pose', 'Upward-Salute', 'Warrior-II']
 
 
@@ -78,7 +78,7 @@ def display_results(results, probabilities, predicted):
             st.write(
                 "Your pose does not match the selected pose " + pose_choice + ", were you trying " + str(results) + "?")
     else:
-        st.write("Your pose was classified as" + str(results) + "with an accuracy of " + str(probabilities[predicted[0]]) +
+        st.write("Your pose was classified as " + str(results) + "with an accuracy of " + str(probabilities[predicted[0]]) +
                  ". This is not high enough to be confident in your pose, please check your form and try again!")
 
 

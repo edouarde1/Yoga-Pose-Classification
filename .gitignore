@@ -1,2 +1,4 @@
 .idea/
 /src/__pycache__
+openpose/
+.DS_Store
