@@ -70,16 +70,17 @@ def display_results(results, probabilities, predicted):
     if probabilities[predicted[0]] > threshold:
         if pose_choice == 'Choose a pose':
             st.write("You have not chosen a model pose. Please select one from the dropdown above.")
-            st.write("Congratulations! Your pose was classified as: " + str(results))
+            st.write("Your pose was classified as: " + str(results))
         elif pose_choice == str(results):
             st.balloons()
             st.write("Congratulations! You have correctly done the pose")
         else:
-            st.write(
-                "Your pose does not match the selected pose " + pose_choice + ", were you trying " + str(results) + "?")
+            st.write("Your pose does not match the selected pose: " + pose_choice + ".")
+            st.write("Were you trying " + str(results) + "?")
     else:
-        st.write("Your pose was classified as" + str(results) + "with an accuracy of " + str(probabilities[predicted[0]]) +
-                 ". This is not high enough to be confident in your pose, please check your form and try again!")
+        st.write("Your pose was classified as " + str(results) + " with an accuracy of "
+                 + '{0:.2f}'.format(probabilities[predicted[0]]*100) + "%.")
+        st.write("This is not high enough to be confident in your pose, please check your form and try again!")
 
 
 # Main Page Info
@@ -117,14 +118,14 @@ if sidebar_choice == sidebar_menu[0]:
             if pose_choice == pose:
                 st.write('Example model for ' + pose + ':')
                 st.image('./example_poses/' + pose + '.png')
-                st.write("All images are provided by the publicly available dataset...")  # TODO: finish reference
+                st.write("All images are provided by the publicly available dataset Yoga-82")  # TODO: finish reference
 
     # Update page subheader and text
     st.subheader('Your Turn')
 
     st.info("Privacy Info: Uploaded images are not saved")
     st.warning("For best results, please upload an image of one (1) person "
-               + "doing the Yoga pose in the center of the frame.")
+               + "doing the Yoga pose in the center of the frame facing the camera.")
 
     # Give option to upload or take a picture
     src = ['Upload Image', 'Take a picture']
@@ -145,6 +146,3 @@ if sidebar_choice == sidebar_menu[0]:
 # TODO: edit, remove, add info
 if sidebar_choice == sidebar_menu[1]:
     st.write(get_md_as_string("project-info.md"))
-    st.write("We are students at the University of British Columbia Okanagan Campus, "
-             + "and this project was created for the course COSC 490: Student-Directed Seminar "
-             + "(Topic: Advanced Machine Learning).")
