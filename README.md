@@ -1,22 +1,18 @@
 # Yoga Pose Classification App
 COSC 490 Final Project due 11 April 2022
 
-Authors:
-    Veronica Jack
-    Edouard Eltherington
-    Logan Parker
-    Khai Luong
+Authors: Edouard Eltherington, Veronica Jack, Logan Parker, and Khai Hung Luong
 
 ## Table of Contents
 * [General Information](#general-information)
 * [Language and Modules](#language-and-modules)
 * [Setup](#setup)
-* [Additional Information](#additional-information)
+* [Walkthrough](#walkthrough)
 * [Citations](#citations)
 
 ## General Information
 
-Please view our [report](https://github.com/edouarde1/Yoga-Pose-Classification/blob/main/documentation/Project-Report.pdf) to learn more about how our app was developed
+Please view our [project proposal](https://github.com/edouarde1/Yoga-Pose-Classification/blob/main/documentation/Project%20Proposal.pdf) and [final report](https://github.com/edouarde1/Yoga-Pose-Classification/blob/main/documentation/Project-Report.pdf) to learn more about our application's development.
 
 ## Language and Modules
 This application was created with the following language and module versions:
@@ -33,18 +29,12 @@ This application was created with the following language and module versions:
 ## Setup
 1. Before you get started, please ensure you have Python 3.7, PIP, and the modules listed above installed.
 
-2. Download and Prepare OpenPose 
-    - For Window User:
-        1. Download [openpose-1.7.0](https://github.com/CMU-Perceptual-Computing-Lab/openpose/releases/tag/v1.7.0) (portable version of OpenPose)
-        2. Extract the folder `openpose` and move it into the `Yoga-Pose-Classification` app (*note: put inside not on the same level*).
-        3. Double click on `openpose/models/getBaseModels.bat` to download the required models for image rendering
-    - For Mac User:
-        1. Download [openpose-1.7.0](https://github.com/CMU-Perceptual-Computing-Lab/openpose/releases/tag/v1.7.0) (portable version of OpenPose)
-        2. Extract the folder `openpose` and move it into the `Yoga-Pose-Classification` app (*note: put inside not on the same level*).
-        3. Download the caffemodel from this [link](https://www.kaggle.com/datasets/changethetuneman/openpose-model?select=pose_iter_584000.caffemodel) and put it inside this path "openpose/models/pose/body_25"
+2. Download and Prepare OpenPose
+    1. Download [openpose-1.7.0](https://github.com/CMU-Perceptual-Computing-Lab/openpose/releases/tag/v1.7.0) (portable version of OpenPose)
+    2. Extract the folder `openpose` and move it into the `Yoga-Pose-Classification` app (*note: put inside not on the same level*).
+    3. Download the [caffemodel](http://posefs1.perception.cs.cmu.edu/OpenPose/models/pose/body_25/) and place the file in "openpose/models/pose/body_25/"
 
-
-3. Run the application, which will open your web browser.
+3. Run the application, which will open the app your default web browser.
 
     ```
     cd src
@@ -65,21 +55,5 @@ This application was created with the following language and module versions:
 
 ![user-upload-results ](https://user-images.githubusercontent.com/75917131/163100119-5f553a4f-d219-4367-a3b1-18b1da2c636f.jpeg)
 
-
-# Yoga Pose Classification App
-COSC 490 Final Project
-
-Authors:
-- Veronica Jack
-- Edouard Eltherington
-- Logan Parker
-- Khai Hung Luong
-
-# Source Citation
+# Citations
 OpenPose models are taken from CMU-Perceptual-Computing-Lab/OpenPose for study purpose, link to the source repository: https://github.com/CMU-Perceptual-Computing-Lab/openpose
-
-## Additional Information
-TODO
-
-## Citations
-TODO
