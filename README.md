@@ -50,6 +50,22 @@ This application was created with the following language and module versions:
     cd src
     streamlit run main.py
     ```
+
+## Walkthrough 
+
+1. Home Screen 
+
+![home-screen](https://user-images.githubusercontent.com/75917131/163100015-35d6bfe7-4d0b-443d-b740-39c9afaf1ba1.jpeg)
+
+2. Select a pose 
+
+![select-pose ](https://user-images.githubusercontent.com/75917131/163100029-277f4a50-3f4c-44c1-99b0-8bd19f8b3e1d.jpeg)
+
+3. Attempt yoga pose, take a photo, and process image 
+
+![user-upload-results ](https://user-images.githubusercontent.com/75917131/163100119-5f553a4f-d219-4367-a3b1-18b1da2c636f.jpeg)
+
+
 # Yoga Pose Classification App
 COSC 490 Final Project
 
