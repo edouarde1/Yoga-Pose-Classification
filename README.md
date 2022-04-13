@@ -16,9 +16,7 @@ Authors:
 
 ## General Information
 
-Purpose of the project (TODO)
-
-Please view our [report]() to learn more about how our app was developed (TODO)
+Please view our [report](https://github.com/edouarde1/Yoga-Pose-Classification/blob/main/documentation/Project-Report.pdf) to learn more about how our app was developed
 
 ## Language and Modules
 This application was created with the following language and module versions:
