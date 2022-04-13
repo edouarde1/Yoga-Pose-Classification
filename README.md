@@ -60,8 +60,7 @@ Authors:
     Khai Luong
 
 # Source Citation
-All the models are taken from CMU-Perceptual-Computing-Lab/OpenPose for only study purpose.
-Link to the source repository: https://github.com/CMU-Perceptual-Computing-Lab/openpose
+OpenPose models are taken from CMU-Perceptual-Computing-Lab/OpenPose for study purpose, link to the source repository: https://github.com/CMU-Perceptual-Computing-Lab/openpose
 
 ## Additional Information
 TODO
