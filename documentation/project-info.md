@@ -6,9 +6,8 @@ Welcome to our Yoga Pose Classification App!
 
 :mag: After receiving the image (which is not saved or kept in any way), the app will use a CNN model to classify your Yoga pose.
 
-:muscle: Our model was trained using the dataset...
+:muscle: Our model was trained using this publicly available dataset on [Kaggle](https://www.kaggle.com/datasets/shrutisaxena/yoga-pose-image-classification-dataset) which was rendered using [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) and classified with [EfficientNet](https://keras.io/api/applications/efficientnet/).
 
 :pushpin: Check out the source code on [Github](https://github.com/edouarde1/Yoga-Pose-Classification)
 
-
-
+We are students at the University of British Columbia Okanagan Campus, and this project was created for the course COSC 490: Student-Directed Seminar (Topic: Advanced Machine Learning).
