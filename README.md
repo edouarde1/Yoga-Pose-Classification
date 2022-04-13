@@ -54,10 +54,10 @@ This application was created with the following language and module versions:
 COSC 490 Final Project
 
 Authors:
-    Veronica Jack
-    Edouard Eltherington
-    Logan Parker
-    Khai Luong
+    - Veronica Jack
+    - Edouard Eltherington
+    - Logan Parker
+    - Khai Hung Luong
 
 # Source Citation
 OpenPose models are taken from CMU-Perceptual-Computing-Lab/OpenPose for study purpose, link to the source repository: https://github.com/CMU-Perceptual-Computing-Lab/openpose
