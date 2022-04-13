@@ -144,4 +144,5 @@ if sidebar_choice == sidebar_menu[0]:
 if sidebar_choice == sidebar_menu[1]:
     st.write(md_to_string("project-info.md"))
     with st.expander("Walkthrough"):
-        st.write(md_to_string("walkthrough.md"))
+        st.write("Looking for an in-depth walkthrough of the application?")
+        st.write("We have step-by-step instructions in our [GitHub repository](https://github.com/edouarde1/Yoga-Pose-Classification/blob/main/documentation/walkthrough.md).")

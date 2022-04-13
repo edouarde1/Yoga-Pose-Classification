@@ -1,3 +1,7 @@
+# Walkthrough
+
+For setup and other information about the project, please view the [README](../README.md).
+
 1. Upon running the app, the following will appear in your default web browser:
 
 ![Main Page](/documentation/walkthrough-assets/1-main-page.png)
