@@ -27,6 +27,8 @@ This application was created with the following language and module versions:
 - urllib3 1.26.7
 
 ## Setup
+
+**Important: This version is compatible both on Windows and MacOS systems. Please note that this version has reduced performance due to Openpose integration on MacOS computers. If you are using a Windows computer is it highly recommended that you download this repo from the ‘window only’ branch **
 1. Before you get started, please ensure you have Python 3.7, PIP, and the modules listed above installed.
 
 2. Download and Prepare OpenPose
